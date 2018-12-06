@@ -84,8 +84,12 @@ public class MonaLisa extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         loadImage();
-        ConvexPolygon[] cp = algoGen(stage);
-        draw(cp, stage, "best");
+        KMeans k = new KMeans(50, 300);
+        k.fit(MonaLisa.source);
+        k.display(MonaLisa.source);
+        System.out.println(k.cout(MonaLisa.source));
+        //ConvexPolygon[] cp = algoGen(stage);
+        //draw(cp, stage, "best");
     }
 
     public static void draw(ConvexPolygon[] cp, Stage myStage, String nom){
