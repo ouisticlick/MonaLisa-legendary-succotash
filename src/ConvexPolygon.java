@@ -154,7 +154,36 @@ public class ConvexPolygon extends Polygon implements Serializable {
 			
 		}
 		
-		
+		public ConvexPolygon crossover(ConvexPolygon p){
+			ConvexPolygon fils = new ConvexPolygon();
+			ArrayList<Double> points = new ArrayList<>();
+			/// On suppose des polygones de même nombre d'angles
+			for(int i = 0; i < this.getPoints().size(); i++){
+				points.add(MonaLisa.gen.nextDouble()<0.5 ? this.getPoints().get(i) : p.getPoints().get(i));
+			}
+			for(int i = 0; i < this.getPoints().size()-1; i+=2){
+				fils.addPoint(points.get(i),points.get(i+1));
+			}
+			Color pere1 = (Color)this.getFill();
+			int r1 = (int)(pere1.getRed()*255);
+			int g1 = (int)(pere1.getGreen()*255);
+			int b1 = (int)(pere1.getBlue()*255);
+			double o1 = pere1.getOpacity();
+			Color pere2 = (Color)p.getFill();
+			int r2 = (int)(pere2.getRed()*255);
+			int g2 = (int)(pere2.getGreen()*255);
+			int b2 = (int)(pere2.getBlue()*255);
+			double o2 = pere2.getOpacity();
+			double o = MonaLisa.gen.nextDouble()<0.5 ? o1 : o2;
+			o = o> 0.5 ? 0.5 : o;
+			fils.setFill(Color.rgb(
+					MonaLisa.gen.nextDouble()<0.5 ? r1 : r2,
+					MonaLisa.gen.nextDouble()<0.5 ? g1 : g2,
+					MonaLisa.gen.nextDouble()<0.5 ? b1 : b2
+			));
+			fils.setOpacity(o);
+			return fils;
+		}
 	
 		
 		

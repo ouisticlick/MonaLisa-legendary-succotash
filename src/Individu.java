@@ -19,7 +19,6 @@ public class Individu {
         this.sommets = sommets;
         this.opacity = opacity;
         cpset = new ConvexPolygon[nbpoly];
-        //TODO rendre différenciable les constructeurs
         for (int i = 0; i < nbpoly; i++) {
             cpset[i] = new ConvexPolygon(sommets, opacity);
         }
@@ -36,8 +35,8 @@ public class Individu {
         }
     }
 
-    //
-    public Individu(int nbpoly, int sommets, int opacity) {
+    //todo arranger, bricolage
+    public Individu(int nbpoly, int sommets, double opacity, Object diff) {
         this.sommets = sommets;
         this.opacity = opacity;
         cpset = new ConvexPolygon[nbpoly];
@@ -114,7 +113,7 @@ public class Individu {
     }
 
     public Individu crossover(Individu x) {
-        Individu fils = new Individu(this.cpset.length, this.sommets, this.opacity);
+        Individu fils = new Individu(this.cpset.length, this.sommets, this.opacity, null);
         List<Integer> index1 = new ArrayList<>();
         List<Integer> index2 = new ArrayList<>();
         for (int i = 0; i < this.cpset.length; i++) {
@@ -130,6 +129,26 @@ public class Individu {
             } else {
                 liste.add(new ConvexPolygon(this.cpset[index2.get(i)]));
             }
+        }
+        Collections.shuffle(liste, MonaLisa.gen);
+        fils.cpset = liste.toArray(fils.cpset);
+        assert fils.cpset.length == this.cpset.length;
+        return fils;
+    }
+
+    public Individu crossover2(Individu x){
+        Individu fils = new Individu(this.cpset.length, this.sommets, this.opacity, null);
+        List<Integer> index1 = new ArrayList<>();
+        List<Integer> index2 = new ArrayList<>();
+        for (int i = 0; i < this.cpset.length; i++) {
+            index1.add(i);
+            index2.add(i);
+        }
+        Collections.shuffle(index1, MonaLisa.gen);
+        Collections.shuffle(index2, MonaLisa.gen);
+        List<ConvexPolygon> liste = new ArrayList<>();
+        for (int i = 0; i < this.cpset.length; i++) {
+            liste.add(this.cpset[index1.get(i)].crossover(x.cpset[index2.get(i)]));
         }
         Collections.shuffle(liste, MonaLisa.gen);
         fils.cpset = liste.toArray(fils.cpset);

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -53,6 +54,7 @@ public class Test extends Application{
 		System.out.println("Read target image " + targetImage + " " + maxX + "x" + maxY);
 		
 		// génération de 10 triangles
+		MonaLisa.gen = new Random();
 		List<ConvexPolygon> ls = new ArrayList<ConvexPolygon>();
 		for (int i=0;i<10;i++)
 			ls.add(new ConvexPolygon(3, MonaLisa.gen.nextDouble()));

@@ -76,7 +76,7 @@ public class Population {
             do {
                 j = MonaLisa.gen.nextInt(this.popset.length);
             } while(j==k);
-            newp.popset[i] = this.popset[k].crossover(this.popset[j]);
+            newp.popset[i] = this.popset[k].crossover2(this.popset[j]);
         }
         return newp;
     }
