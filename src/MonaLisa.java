@@ -18,17 +18,19 @@ public class MonaLisa extends Application {
     public static Color[][] source;
     public static int maxX, maxY;
 
-    public final static int NB_GEN = 1000;
+    public final static int NB_GEN = 5000;
     public final static int NB_INDIVIDU = 100;
     public final static int NB_SELECT_BEST = 15;
     public final static int NB_SELECT_ALEA = 5;
     public final static int NB_POLY = 50;
-    public final static int NB_SOMMETS = 3;
     public final static double DEFAULT_OPACITY = 0.15;
     public static double PROBA_SELECT_INDIVIDU = 1;
     public final static double PROBA_SELECT_POLYGONE = 0.01;
-    public static double INTENSITE_MODIFICATION = 0.10;
+    public static double INTENSITE_MODIFICATION = 0.02;
     public static Random gen;
+    public final static String IMAGE_FILE =  "monaLisa-100.jpg";
+    public final static int COEFF_COLOR_DIST = 150;
+
 
     public static void main(String[]args){
         gen = new Random(42);
@@ -36,16 +38,17 @@ public class MonaLisa extends Application {
     }
 
 
-    public static ConvexPolygon[] algoGen(Stage stage){
+    public static ConvexPolygon[] algoGen(Stage stage, ConvexPolygon[] pols){
 
-        Population pop_actuelle = new Population(NB_INDIVIDU, NB_POLY, NB_SOMMETS, DEFAULT_OPACITY);
+        Population pop_actuelle = new Population(pols);
+        pop_actuelle = pop_actuelle.crossover(NB_INDIVIDU);
         for(int i = 0; i < NB_GEN; i++){
 
             Population selectionnee = pop_actuelle.selection(NB_SELECT_BEST, NB_SELECT_ALEA);
             System.out.println("Génération : "+i+"; meilleur = "+pop_actuelle.getPopset()[0].cout);
             pop_actuelle = selectionnee.crossover(NB_INDIVIDU);
             pop_actuelle.mutation(PROBA_SELECT_INDIVIDU, PROBA_SELECT_POLYGONE, INTENSITE_MODIFICATION);
-            if(i%10==0){
+            if(i%100==0){
                 draw(pop_actuelle.getPopset()[0].getCpset(), stage, ""+i);
             }
         }
@@ -56,7 +59,7 @@ public class MonaLisa extends Application {
     }
 
     public static void loadImage(){
-        String targetImage = "monaLisa-100.jpg";
+        String targetImage = IMAGE_FILE;
         try{
             BufferedImage bi = ImageIO.read(new File(targetImage));
             maxX = bi.getWidth();
@@ -84,12 +87,25 @@ public class MonaLisa extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         loadImage();
-        KMeans k = new KMeans(50, 300);
+        KMeans k = new KMeans(NB_POLY, 300, COEFF_COLOR_DIST);
         k.fit(MonaLisa.source);
-        k.display(MonaLisa.source);
-        System.out.println(k.cout(MonaLisa.source));
-        //ConvexPolygon[] cp = algoGen(stage);
-        //draw(cp, stage, "best");
+
+
+
+        /**
+         * Polygones par KMeans
+         */
+        System.out.println("Polygones induits par jarvis march");
+        ConvexPolygon[] pols = k.clustersToPolygons(MonaLisa.source);
+        System.out.println("Cout : "+k.coutPolygones(pols, MonaLisa.source));
+        draw(pols, stage, " clustersToPoly");
+
+
+        /**
+         * Algogen
+         */
+        ConvexPolygon[] cp = algoGen(stage, pols);
+        draw(cp, stage, "best");
     }
 
     public static void draw(ConvexPolygon[] cp, Stage myStage, String nom){

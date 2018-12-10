@@ -4,11 +4,13 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class Individu {
 
+    // Un individu est un ensemble de polygones convexes
     ConvexPolygon[] cpset;
     private int sommets;
     private double opacity;
@@ -22,7 +24,13 @@ public class Individu {
         for (int i = 0; i < nbpoly; i++) {
             cpset[i] = new ConvexPolygon(sommets, opacity);
         }
+    }
 
+    public Individu(ConvexPolygon[] pols){
+        this.cpset = Arrays.copyOf(pols, pols.length);
+        //todo peut etre source de problemes ?
+        this.sommets = cpset[0].getPoints().size()/2;
+        this.opacity = cpset[0].getOpacity();
     }
 
     // constructeur par copie
@@ -77,10 +85,12 @@ public class Individu {
                 double green = ((Color) cpset[i].getFill()).getGreen();
                 double blue = ((Color) cpset[i].getFill()).getBlue();
                 double opacity = ((Color) cpset[i].getFill()).getOpacity();
+                // les couleurs varient selon l'intensité de changement donnée
                 red += MonaLisa.gen.nextDouble() * chgmt * 2 - chgmt;
                 green += MonaLisa.gen.nextDouble() * chgmt * 2 - chgmt;
                 blue += MonaLisa.gen.nextDouble() * chgmt * 2 - chgmt;
                 opacity += MonaLisa.gen.nextDouble() * chgmt * 2 - chgmt;
+                //appel à la fonction normalize
                 red = normalize(red);
                 green = normalize(green);
                 blue = normalize(blue);
@@ -89,6 +99,7 @@ public class Individu {
                         (int) (255 * green),
                         (int) (255 * blue),
                         opacity));
+                //maintenant on fait muter les polygones de l'individu
                 for (int j = 0; j < cpset[i].getPoints().size(); j++) {
                     //if(MonaLisa.gen.nextDouble()<proba1){
                     //CAS X PUIS CAS Y
@@ -108,11 +119,29 @@ public class Individu {
         }
     }
 
+    // ramène un double dans l'intervalle [0,1]
     private double normalize(double nb) {
         return nb < 0 ? 0 : nb > 1 ? 1 : nb;
     }
 
+    // fonction crossover
     public Individu crossover(Individu x) {
+        Individu fils = new Individu(this.cpset.length, this.sommets, this.opacity, null);
+        List<ConvexPolygon> liste = new ArrayList<>();
+        for (int i = 0; i < this.cpset.length; i++) {
+            if (MonaLisa.gen.nextDouble()<0.5) {
+                liste.add(new ConvexPolygon(this.cpset[i]));
+            } else {
+                liste.add(new ConvexPolygon(this.cpset[i]));
+            }
+        };
+        fils.cpset = liste.toArray(fils.cpset);
+        assert fils.cpset.length == this.cpset.length;
+        return fils;
+    }
+
+
+    public Individu crossover2(Individu x) {
         Individu fils = new Individu(this.cpset.length, this.sommets, this.opacity, null);
         List<Integer> index1 = new ArrayList<>();
         List<Integer> index2 = new ArrayList<>();
@@ -136,7 +165,7 @@ public class Individu {
         return fils;
     }
 
-    public Individu crossover2(Individu x){
+    public Individu crossover3(Individu x){
         Individu fils = new Individu(this.cpset.length, this.sommets, this.opacity, null);
         List<Integer> index1 = new ArrayList<>();
         List<Integer> index2 = new ArrayList<>();

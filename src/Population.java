@@ -14,6 +14,11 @@ public class Population {
         }
     }
 
+    public Population(ConvexPolygon[] pols){
+        popset = new Individu[1];
+        popset[0] = new Individu(pols);
+    }
+
     public Population(int nbindividu){
         popset = new Individu[nbindividu];
     }
@@ -67,7 +72,6 @@ public class Population {
         }
     }
 
-    //todo better
     public Population crossover(int nbindividu){
         Population newp = new Population(nbindividu);
         for(int i = 0; i < nbindividu; i++){
@@ -75,8 +79,8 @@ public class Population {
             int j;
             do {
                 j = MonaLisa.gen.nextInt(this.popset.length);
-            } while(j==k);
-            newp.popset[i] = this.popset[k].crossover2(this.popset[j]);
+            } while(j==k && this.popset.length>1);
+            newp.popset[i] = this.popset[k].crossover(this.popset[j]);
         }
         return newp;
     }
