@@ -34,16 +34,11 @@ public class Population {
         for(int i = 0; i < popset.length; i++){
              popset[i].calcFitness();
         }
-        List<Individu> atrier = new ArrayList<Individu>();
+        List<Individu> atrier = new ArrayList<>();
         for (Individu i : popset){
             atrier.add(i);
         }
-        Collections.sort(atrier, new Comparator<Individu>() {
-            @Override
-            public int compare(Individu o1, Individu o2) {
-                return o1.cout-o2.cout < 0 ? -1 : (o1.cout-o2.cout == 0 ? 0 : 1);
-            }
-        });
+        Collections.sort(atrier, (o1, o2) -> o1.cout-o2.cout < 0 ? -1 : (o1.cout-o2.cout == 0 ? 0 : 1));
         return atrier;
     }
 

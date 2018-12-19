@@ -28,15 +28,6 @@ public class ConvexPolygon extends Polygon implements Serializable {
         this.setOpacity(opacity);
     }
 
-
-    // randomly generates a polygon
-    public ConvexPolygon(int numPoints, double opacity, Color c) {
-        super();
-        genRandomConvexPolygone(numPoints);
-        this.setFill(c);
-        this.setOpacity(opacity);
-    }
-
     public ConvexPolygon(List<KMeans.Point> points, double opacity, Color c) {
         super();
         List<KMeans.Point> points2 = sortVerticies(points);

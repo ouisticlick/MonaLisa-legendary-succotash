@@ -60,12 +60,31 @@ public class KMeans {
         }
     }
 
+    public Color[][] predict(Color[][] image) {
+        Color[][] colors = new Color[image.length][image[0].length];
+        for (int i = 0; i < image.length; i++) {
+            for (int j = 0; j < image[0].length; j++) {
+                int fav_id = -1;
+                double min_dist = Double.POSITIVE_INFINITY;
+                for (int kk = 0; kk < k; kk++) {
+                    double dist = this.clusters[kk].distance(new Point(i, j, image[i][j]));
+                    if (dist < min_dist) {
+                        min_dist = dist;
+                        fav_id = kk;
+                    }
+                }
+                colors[i][j] = this.clusters[fav_id].color;
+            }
+        }
+        return colors;
+    }
+
     /**
      * Pour une image, l'affiche
      *
      * @param kmeans
      */
-    public void display(Color[][] kmeans) {
+    public void render(Color[][] kmeans, String filename) {
         WritableImage img = new WritableImage(kmeans.length, kmeans[0].length);
         PixelWriter pw = img.getPixelWriter();
         for (int i = 0; i < kmeans.length; i++) {
@@ -75,7 +94,7 @@ public class KMeans {
         }
         RenderedImage renderedImage = SwingFXUtils.fromFXImage(img, null);
         try {
-            ImageIO.write(renderedImage, "png", new File("kmeans.png"));
+            ImageIO.write(renderedImage, "png", new File(filename));
             System.out.println("wrote image");
         } catch (IOException e1) {
             e1.printStackTrace();
@@ -126,8 +145,7 @@ public class KMeans {
         boolean[] visited=new boolean[points.length];
 
         int current=leftmost;
-        int next=0;
-        //list.add();
+        int next;
 
         do{
             // visited[current]=true;
@@ -146,7 +164,7 @@ public class KMeans {
             }
 
             for(int i=0;i<points.length;i++){
-                if(i!=next&&i!=current&&crossproduct(points[current],points[next],points[i])==0&&visited[i]==false){
+                if(i!=next&&i!=current&&crossproduct(points[current],points[next],points[i])==0&& !visited[i]){
                     visited[i]=true;
                     list.add(points[i]);
                 }
@@ -199,7 +217,7 @@ public class KMeans {
             }
         }
         for (int kk = 0; kk < k; kk++) {
-            List<Point> coins = this.jarvis_march(pointsParCluster.get(kk).toArray(new Point[pointsParCluster.get(kk).size()]));
+            List<Point> coins = this.jarvis_march(pointsParCluster.get(kk).toArray(new Point[0]));
             pols[kk] = new ConvexPolygon(coins, 0.9, this.clusters[kk].color);
         }
         return pols;

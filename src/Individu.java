@@ -12,13 +12,11 @@ public class Individu {
 
     // Un individu est un ensemble de polygones convexes
     ConvexPolygon[] cpset;
-    private int sommets;
     private double opacity;
     public double cout = -1;
 
 
     public Individu(int nbpoly, int sommets, double opacity) {
-        this.sommets = sommets;
         this.opacity = opacity;
         cpset = new ConvexPolygon[nbpoly];
         for (int i = 0; i < nbpoly; i++) {
@@ -28,24 +26,19 @@ public class Individu {
 
     public Individu(ConvexPolygon[] pols){
         this.cpset = Arrays.copyOf(pols, pols.length);
-        //todo peut etre source de problemes ?
-        this.sommets = cpset[0].getPoints().size()/2;
         this.opacity = cpset[0].getOpacity();
     }
 
     // constructeur par copie
     public Individu(Individu in) {
         cpset = new ConvexPolygon[in.cpset.length];
-        this.sommets = in.sommets;
         this.opacity = in.opacity;
         for (int i = 0; i < in.cpset.length; i++) {
             cpset[i] = new ConvexPolygon(in.cpset[i]);
         }
     }
 
-    //todo arranger, bricolage
-    public Individu(int nbpoly, int sommets, double opacity, Object diff) {
-        this.sommets = sommets;
+    public Individu(int nbpoly, double opacity) {
         this.opacity = opacity;
         cpset = new ConvexPolygon[nbpoly];
     }
@@ -80,7 +73,6 @@ public class Individu {
         assert cpset.length >= 1;
         for (int i = 0; i < cpset.length; i++) {
             if (MonaLisa.gen.nextDouble() < proba1) {
-                //cpset[i] = new ConvexPolygon(this.sommets, this.opacity);
                 double red = ((Color) cpset[i].getFill()).getRed();
                 double green = ((Color) cpset[i].getFill()).getGreen();
                 double blue = ((Color) cpset[i].getFill()).getBlue();
@@ -126,7 +118,7 @@ public class Individu {
 
     // fonction crossover
     public Individu crossover(Individu x) {
-        Individu fils = new Individu(this.cpset.length, this.sommets, this.opacity, null);
+        Individu fils = new Individu(this.cpset.length, this.opacity);
         List<ConvexPolygon> liste = new ArrayList<>();
         for (int i = 0; i < this.cpset.length; i++) {
             if (MonaLisa.gen.nextDouble()<0.5) {
@@ -142,7 +134,7 @@ public class Individu {
 
 
     public Individu crossover2(Individu x) {
-        Individu fils = new Individu(this.cpset.length, this.sommets, this.opacity, null);
+        Individu fils = new Individu(this.cpset.length, this.opacity);
         List<Integer> index1 = new ArrayList<>();
         List<Integer> index2 = new ArrayList<>();
         for (int i = 0; i < this.cpset.length; i++) {
@@ -166,7 +158,7 @@ public class Individu {
     }
 
     public Individu crossover3(Individu x){
-        Individu fils = new Individu(this.cpset.length, this.sommets, this.opacity, null);
+        Individu fils = new Individu(this.cpset.length, this.opacity);
         List<Integer> index1 = new ArrayList<>();
         List<Integer> index2 = new ArrayList<>();
         for (int i = 0; i < this.cpset.length; i++) {
